@@ -1,0 +1,21 @@
+management:
+  endpoints:
+    web:
+      base-path: "/"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    diskspace:
+      enabled: false
+server:
+  port: 3001
+
+
+spring:
+  databaseUrl: 'postgres://postgres:postgres@localhost:54321/persons_db?sslmode=disable'
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    disable-swagger-default-url: true

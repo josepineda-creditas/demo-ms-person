@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+  ms-persons:
+    build:
+      context: .
+      args:
+        artifactory_user: $ORG_GRADLE_PROJECT_artifactory_user
+        artifactory_password: $ORG_GRADLE_PROJECT_artifactory_password
+        artifactory_contextUrl: $ORG_GRADLE_PROJECT_artifactory_contextUrl
+    image: ms-persons
+    hostname: ms-persons
+    ports:
+      - "3001:3001"
+    init: true
+    profiles:
+      - app
+    networks:
+      - subnet
+
+  wiremock:
+    image: rodolpheche/wiremock:2.27.2-alpine
+    hostname: wiremock
+    command: "--local-response-templating"
+    volumes:
+      - ./wiremock:/home/wiremock
+    ports:
+      - "8081:8081"
+
+  db:
+    image: postgres
+    volumes:
+      - ./docker/postgres-multiple-databases.sh:/docker-entrypoint-initdb.d/postgres-multiple-databases.sh
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_MULTIPLE_DATABASES=persons_db,persons_db_test
+    ports:
+      - "54321:5432"
+    networks:
+      - subnet
+
+networks:
+  subnet:
+    driver: bridge
+
